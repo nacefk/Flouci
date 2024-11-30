@@ -6,10 +6,6 @@ import {
   TextInputProps,
   ViewStyle,
   TextStyle,
-  Keyboard,
-  TouchableWithoutFeedback,
-  KeyboardAvoidingView,
-  Platform,
 } from "react-native";
 import Currency from "../../assets/images/svgs/Currency.svg";
 import { StyleProp } from "react-native";
@@ -18,64 +14,91 @@ interface InputProps extends TextInputProps {
   placeholder?: string;
   containerStyle?: StyleProp<ViewStyle>;
   inputStyle?: StyleProp<TextStyle>;
+  onChangeText?: (text: string) => void; // Parent handler for value changes
 }
 
 const Input: React.FC<InputProps> = ({
   placeholder,
-  containerStyle,
-  inputStyle,
+  containerStyle = {},
+  inputStyle = {},
+  onChangeText,
   ...props
 }) => {
+  const [value, setValue] = useState<string>(""); // Input's value state
   const [isFocused, setIsFocused] = useState(false);
 
+  const formatNumber = (val: string): string => {
+    const numericValue = val.replace(/[^0-9.]/g, ""); // Keep only numbers and decimal
+    const numberValue = parseFloat(numericValue);
+    if (isNaN(numberValue)) return ""; // Handle invalid input
+    return numberValue.toFixed(3); // Format to 3 decimal places
+  };
+
+  const handleChangeText = (text: string) => {
+    setValue(text);
+
+    // Pass raw input to parent during typing
+    if (onChangeText) {
+      onChangeText(text);
+    }
+  };
+
+  const handleBlur = () => {
+    // Format the value when losing focus
+    const formattedValue = formatNumber(value);
+    setValue(formattedValue);
+
+    // Pass formatted value to parent
+    if (onChangeText) {
+      onChangeText(formattedValue);
+    }
+
+    setIsFocused(false);
+  };
+
+  const handleFocus = () => {
+    setIsFocused(true);
+  };
+
   return (
-    <KeyboardAvoidingView
-      style={styles.flex}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    <View
+      style={[
+        styles.container,
+        isFocused && styles.focusedContainer,
+        containerStyle,
+      ]}
     >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View
-          style={[
-            styles.container,
-            isFocused && styles.focusedContainer,
-            containerStyle, // Apply container-specific styles
-          ]}
-        >
-          <Currency width={22} height={24} />
-          <TextInput
-            style={[styles.input, { textAlign: "right" }, inputStyle]} // Align text to the right
-            placeholder={placeholder}
-            placeholderTextColor="#A9A9A9"
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            keyboardType="numeric"
-            {...props}
-          />
-        </View>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+      <Currency width={22} height={24} />
+      <TextInput
+        {...props}
+        style={[styles.input, inputStyle, { textAlign: "right" }]}
+        placeholder={placeholder}
+        placeholderTextColor="#A9A9A9"
+        value={value}
+        onChangeText={handleChangeText}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        keyboardType="numeric"
+      />
+    </View>
   );
 };
 
 export default Input;
 
 const styles = StyleSheet.create({
-  flex: {
-    // flex: 1,
-  },
   container: {
     flexDirection: "row",
     alignItems: "center",
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: "#e6e6e6",
     borderRadius: 8,
     paddingHorizontal: 10,
-    marginVertical: 10,
     height: 70,
     width: "100%",
   },
   focusedContainer: {
-    borderColor: "red",
+    borderColor: "#f68e21",
   },
   input: {
     flex: 1,
