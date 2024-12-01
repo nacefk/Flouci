@@ -85,10 +85,8 @@ const Transaction = () => {
   };
   useEffect(() => {
     if (balance === 0) {
-      console.log("error");
       Toast.show({
         type: "error",
-
         text1: "insufficient funds",
       });
     }
@@ -107,13 +105,16 @@ const Transaction = () => {
       } else {
         calculatedFees = Math.min(0.01 * inputNumber, 3);
       }
-
       setFees(parseFloat(calculatedFees.toFixed(3)));
-
       const calculatedTotal = inputNumber + calculatedFees;
       setTotal(parseFloat(calculatedTotal.toFixed(3)));
 
       setBalance(Math.max(dummyData.balance - calculatedTotal * 1000, 0));
+      if (calculatedTotal * 1000 > dummyData.balance) {
+        const maxAmount = (dummyData.balance - calculatedFees * 1000) / 1000;
+        setInputValue(maxAmount.toFixed(3));
+        setTotal(dummyData.balance / 1000);
+      }
     } else if (value === "") {
       setBalance(dummyData.balance);
       setFees(0);
