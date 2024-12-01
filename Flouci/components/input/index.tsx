@@ -14,7 +14,7 @@ interface InputProps extends TextInputProps {
   placeholder?: string;
   containerStyle?: StyleProp<ViewStyle>;
   inputStyle?: StyleProp<TextStyle>;
-  onChangeText?: (text: string) => void; // Parent handler for value changes
+  onChangeText?: (text: string) => void;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -22,33 +22,21 @@ const Input: React.FC<InputProps> = ({
   containerStyle = {},
   inputStyle = {},
   onChangeText,
+  value = "",
   ...props
 }) => {
-  const [value, setValue] = useState<string>(""); // Input's value state
   const [isFocused, setIsFocused] = useState(false);
 
   const formatNumber = (val: string): string => {
-    const numericValue = val.replace(/[^0-9.]/g, ""); // Keep only numbers and decimal
+    const numericValue = val.replace(/[^0-9.]/g, "");
     const numberValue = parseFloat(numericValue);
-    if (isNaN(numberValue)) return ""; // Handle invalid input
-    return numberValue.toFixed(3); // Format to 3 decimal places
-  };
-
-  const handleChangeText = (text: string) => {
-    setValue(text);
-
-    // Pass raw input to parent during typing
-    if (onChangeText) {
-      onChangeText(text);
-    }
+    if (isNaN(numberValue)) return "";
+    return numberValue.toFixed(3);
   };
 
   const handleBlur = () => {
-    // Format the value when losing focus
     const formattedValue = formatNumber(value);
-    setValue(formattedValue);
 
-    // Pass formatted value to parent
     if (onChangeText) {
       onChangeText(formattedValue);
     }
@@ -68,14 +56,14 @@ const Input: React.FC<InputProps> = ({
         containerStyle,
       ]}
     >
-      <Currency width={22} height={24} />
+      <Currency width={22} height={24} color={"#B4B5B6"} />
       <TextInput
         {...props}
         style={[styles.input, inputStyle, { textAlign: "right" }]}
         placeholder={placeholder}
         placeholderTextColor="#A9A9A9"
         value={value}
-        onChangeText={handleChangeText}
+        onChangeText={onChangeText}
         onFocus={handleFocus}
         onBlur={handleBlur}
         keyboardType="numeric"

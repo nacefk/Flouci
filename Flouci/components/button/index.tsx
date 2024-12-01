@@ -1,14 +1,18 @@
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import React, { useState } from "react";
+import { Text, TouchableOpacity, StyleSheet } from "react-native";
+import React from "react";
 
 interface ButtonProps {
   condition: boolean;
   buttonText: string;
+  onPress?: () => void;
 }
 
-const Button: React.FC<ButtonProps> = ({ condition, buttonText }) => {
+const Button: React.FC<ButtonProps> = ({ condition, buttonText, onPress }) => {
   return (
-    <TouchableOpacity style={[styles.button, condition && styles.activeButton]}>
+    <TouchableOpacity
+      style={[styles.button, condition && styles.activeButton]}
+      onPress={onPress}
+    >
       <Text style={[styles.text, condition && styles.activeText]}>
         {buttonText}
       </Text>
@@ -33,7 +37,6 @@ const styles = StyleSheet.create({
     color: "#b4b5b6",
     fontSize: 16,
     fontWeight: "600",
-    fontFamily: "Ubuntu_Medium",
   },
   activeText: {
     color: "white",

@@ -3,13 +3,23 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
 interface CheckButtonProps {
   number: number;
-  onPress?: () => void;
+  onPress: (value: number) => void;
+  isActive?: boolean;
 }
 
-const CheckButton: React.FC<CheckButtonProps> = ({ number, onPress }) => {
+const CheckButton: React.FC<CheckButtonProps> = ({
+  number,
+  onPress,
+  isActive,
+}) => {
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress}>
-      <Text style={styles.numberText}>{number}</Text>
+    <TouchableOpacity
+      style={[styles.button, isActive && styles.activeButton]}
+      onPress={() => onPress(number)}
+    >
+      <Text style={[styles.numberText, isActive && styles.activeNumberText]}>
+        {number}
+      </Text>
     </TouchableOpacity>
   );
 };
@@ -26,12 +36,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     height: 40,
     minWidth: 51,
-    backgroundColor: "#transparent",
+    backgroundColor: "transparent",
     marginHorizontal: 8,
   },
   numberText: {
     fontSize: 16,
-    fontWeight: "500",
     color: "#000",
+  },
+  activeButton: {
+    borderColor: "#f68e21",
+    backgroundColor: "#fef4e9",
+  },
+  activeNumberText: {
+    color: "#f68e21",
   },
 });

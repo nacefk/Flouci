@@ -1,4 +1,4 @@
-import { Slot, Stack } from "expo-router";
+import { Stack } from "expo-router";
 
 export default function RootLayout({}) {
   return (
@@ -11,8 +11,8 @@ export default function RootLayout({}) {
         headerTitleStyle: {
           fontWeight: "500",
         },
-        // headerTitle: "Send money",
-        // headerBackTitle: "",
+        headerTitleAlign: "center",
+
         headerBackButtonDisplayMode: "minimal",
       }}
     >
@@ -25,7 +25,13 @@ export default function RootLayout({}) {
       <Stack.Screen
         name="index"
         options={{
-          headerTitle: "aaa",
+          headerTitle: "Home",
+        }}
+      />
+      <Stack.Screen
+        name="completedTransaction"
+        options={{
+          headerTitle: "",
         }}
       />
     </Stack>
